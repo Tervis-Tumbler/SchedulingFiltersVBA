@@ -1,4 +1,6 @@
-﻿function Test-FileLock {
+﻿#Requires -Modules OOXMLSourceControl.psm1
+
+function Test-FileLock {
     [cmdletbinding()]
     param(
         [parameter(Mandatory=$true)]
@@ -27,13 +29,8 @@
 }
 
 function Export-SchedulingFilterExcelVBA{
-    $SourceFile = '\\fs1\DisasterRecovery\Source Controlled Items\Excel\SchedulingFiltersVBA\SchedulingFilters.xlsm'
-    $DestinationFolder = '\\fs1\DisasterRecovery\Source Controlled Items\Excel\SchedulingFiltersVBA\SchedulingFilters'
-    Export-ExcelProject -WorkbookPath $SourceFile -OutputPath $DestinationFolder -Verbose
-}
+    $SourceFile = "C:\Users\alozano\Documents\WindowsPowerShell\Modules\SchedulingFiltersVBA\Worksheets\SchedulingFilters.xlsm"
+    $DestinationFolder = "C:\Users\alozano\Documents\WindowsPowerShell\Modules\SchedulingFiltersVBA\Worksheet Export"
 
-function Export-SchedulingFilterExcelVBA{
-    $SourceFile = '\\fs1\DisasterRecovery\Source Controlled Items\Excel\SchedulingFiltersVBA\SchedulingFilters.xlsm'
-    $DestinationFolder = '\\fs1\DisasterRecovery\Source Controlled Items\Excel\SchedulingFiltersVBA\SchedulingFilters'
     Export-ExcelProject -WorkbookPath $SourceFile -OutputPath $DestinationFolder -Verbose
 }
