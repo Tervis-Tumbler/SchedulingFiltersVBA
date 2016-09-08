@@ -35,15 +35,30 @@ function Export-SchedulingFilterExcelVBA {
 
 #Export-SchedulingFilterExcelVBA
 
-$SchedulingPCComputerNames = @("Scheduling2-pc")
+$SchedulingComputerNames = @("Scheduling2-pc","MMuniz-PC","lasbury2-pc")
 
-function get-SchedulingPCComputerNames {
-    $SchedulingPCComputerNames
+function get-SchedulingComputerNames {
+    $SchedulingComputerNames
 }
 
-function Get-SchedulingFilterButtonEvents {
-    foreach ($SchedulingPCComputerName in get-SchedulingPCComputerNames) {
-        $EventLogEntries = get-eventlog -LogName Application -ComputerName $SchedulingPCComputerName -Source WSH
-    }
+function Get-SchedulingFilterButtonEvents {    
+    foreach ($SchedulingComputerName in get-SchedulingComputerNames) {
+        $EventLogEntries = get-eventlog -LogName Application -ComputerName $SchedulingComputerName -Source WSH
+        $PathToStoreEvents = "\\tervis.prv\applications\Logs\Infrastructure\SchedulingFiltersVBA\$SchedulingComputerName"
+        if ((Test-Path $PathToStoreEvents) -eq $False) { New-item -ItemType Directory $PathToStoreEvents }
 
+        foreach ($EventLogEntry in $EventLogEntries) {
+            $MessageProperties = $EventLogEntry.Message | ConvertFrom-Json
+            [pscustomobject][ordered]@{
+                MachineName = $EventLogEntry.MachineName
+                FunctionName = $MessageProperties.FunctionName
+                TimeGenerated = $EventLogEntry.TimeGenerated
+                TimeWritten = $EventLogEntry.TimeWritten
+            } | 
+            ConvertTo-Json |
+            Out-File -FilePath "$PathToStoreEvents\$(get-date -Format -- FileDateTime).json"
+
+            #[datetime]::ParseExact($(get-date -Format -- FileDateTime),"yyyyMMddTHHmmssffff", [System.Globalization.CultureInfo]::CurrentCulture)
+        }
+    }
 }
