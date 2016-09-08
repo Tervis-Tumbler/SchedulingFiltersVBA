@@ -81,3 +81,99 @@ End Sub
 Sub BatchNumberClear()
     ActiveSheet.Range("Row3").AutoFilter Field:=7  'Batch #
 End Sub
+
+Sub InvokeShipPriorityFilterSameDay()
+    ActiveSheet.Range("Row3").AutoFilter Field:=55, Criteria1:="Same Day Rush" 'Ship Priority
+End Sub
+Sub InvokeShipPriorityFilterRushNotSameDay()
+    ActiveSheet.Range("Row3").AutoFilter Field:=55, Criteria1:=Array( _
+            "Rush 1D", "Rush 2D", "Rush 3D" _
+        ) 'Ship Priority
+End Sub
+Sub InvokeShipPriorityFilterStandard()
+    ActiveSheet.Range("Row3").AutoFilter Field:=55, Criteria1:="Standard" 'Ship Priority
+End Sub
+Sub InvokeShipPriorityClearFilter()
+    ActiveSheet.Range("Row3").AutoFilter Field:=55 'Ship Priority
+End Sub
+
+
+Sub TestNewEvent()
+    NewEvent Message:="{FunctionName:'Value'}"
+End Sub
+
+Sub TestNewSchedlingFilterFunctionCallEvent()
+    NewSchedlingFilterFunctionCallEvent FunctionName:="TestFunctionName"
+
+End Sub
+
+Sub DTCDuplicateRemovalSheetPersonalized()
+    Application.ScreenUpdating = False
+    Dim DTCSheet As Object
+    Range("K3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets.Add After:=ActiveSheet
+    ActiveSheet.Select
+    ActiveSheet.Name = "Personalized"
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
+    Application.ScreenUpdating = True
+End Sub
+
+Sub DTCDuplicateRemovalSheetPersonalized1Cup()
+    Application.ScreenUpdating = False
+    Dim DTCSheet As Object
+    Range("K3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets.Add After:=ActiveSheet
+    ActiveSheet.Select
+    ActiveSheet.Name = "Personalized, 1 Cup"
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
+    Application.ScreenUpdating = True
+End Sub
+
+Sub DTCDuplicateRemovalSheetAutoEligible()
+    Application.ScreenUpdating = False
+    Dim DTCSheet As Object
+    Range("K3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets.Add After:=ActiveSheet
+    ActiveSheet.Select
+    ActiveSheet.Name = "Auto Eligible"
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
+    Application.ScreenUpdating = True
+End Sub
+
+Sub DTCDuplicateRemovalSheetNotPersonalized()
+    Application.ScreenUpdating = False
+    Dim DTCSheet As Object
+    Range("K3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets.Add After:=ActiveSheet
+    ActiveSheet.Select
+    ActiveSheet.Name = "Not Personalized"
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
+    Application.ScreenUpdating = True
+End Sub
+
+Sub DTCAll()
+    DTCFilter4
+    DTCDuplicateRemovalSheet4
+    DTCFilter3
+    DTCDuplicateRemovalSheet3
+    DTCFilter2
+    DTCDuplicateRemovalSheet2
+    DTCFilter1
+    DTCDuplicateRemovalSheet1
+End Sub

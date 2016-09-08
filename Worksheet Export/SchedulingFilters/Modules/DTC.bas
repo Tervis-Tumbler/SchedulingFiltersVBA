@@ -4,6 +4,18 @@ Enum OrderTypeEnum
     Warranty
 End Enum
 
+Enum OrderSubtypeEnum
+    DTC_Personalized
+    DTC_Not_Personalized
+    DTC_Not_Personlized_1_Cup
+    DTC_Auto_Eligible
+    Warranty_Personalized
+    Warranty_Not_Personalized
+    Warranty_Not_Personlized_1_Cup
+    Warranty_Auto_Eligible
+End Enum
+
+
 Sub InvokeSchedulingFilter _
     ( _
         OrderType As OrderTypeEnum, _
@@ -57,6 +69,42 @@ Sub InvokeSchedulingFilter _
     Application.ScreenUpdating = True
 End Sub
 
+Sub InvokeDuplicateRemoval( _
+    OrderSubtype As OrderSubtypeEnum _
+    )
+    
+    Application.ScreenUpdating = False
+    Range("K3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets.Add After:=ActiveSheet
+    ActiveSheet.Select
+    
+    Select Case OrderSubtype
+        Case OrderSubtypeEnum.DTC_Auto_Eligible
+            ActiveSheet.Name = "DTC Auto Eligible"
+        Case OrderSubtypeEnum.DTC_Not_Personalized
+            AtiveSheet.Name = "DTC Not Personalized"
+        Case OrderSubtypeEnum.DTC_Not_Personlized_1_Cup
+            ActiveSheet.Name = "DTC Not Personalized 1Cup"
+        Case OrderSubtypeEnum.DTC_Personalized
+            ActiveSheet.Name = "DTC_Personalized"
+        Case OrderSubtypeEnum.Warranty_Auto_Eligible
+            ActiveSheet.Name = "Warranty Auto Eligible"
+        Case OrderSubtypeEnum.Warranty_Not_Personalized
+            ActiveSheet.Name = "Warranty Not Personalized"
+        Case OrderSubtypeEnum.Warranty_Not_Personlized_1_Cup
+            ActiveSheet.Name = "Warranty Not Personalized 1Cup"
+        Case OrderSubtypeEnum.Warranty_Personalized
+            ActiveSheet.Name = "Warranty Personalized"
+    End Select
+            
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
+    Application.ScreenUpdating = True
+    End Sub
+
 Sub InvokeDTCFilterPersonalized()
     InvokeSchedulingFilter OrderType:=OrderTypeEnum.DTC, SOPersonalized:=True, OneHundredPercentAutoEligible:=False, ShipPriorityStandard:=True
     NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeDTCFilterPersonalized"
@@ -90,92 +138,38 @@ Sub InvokeWarrantyFilterNotPersonalized()
     InvokeSchedulingFilter OrderType:=OrderTypeEnum.Warranty, SOPersonalized:=False, OneHundredPercentAutoEligible:=False
     NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeWarrantyFilterNotPersonalized"
 End Sub
-Sub InvokeShipPriorityFilterSameDay()
-    ActiveSheet.Range("Row3").AutoFilter Field:=55, Criteria1:="Same Day Rush" 'Ship Priority
-End Sub
-Sub InvokeShipPriorityFilterRushNotSameDay()
-    ActiveSheet.Range("Row3").AutoFilter Field:=55, Criteria1:=Array( _
-            "Rush 1D", "Rush 2D", "Rush 3D" _
-        ) 'Ship Priority
-End Sub
-Sub InvokeShipPriorityFilterStandard()
-    ActiveSheet.Range("Row3").AutoFilter Field:=55, Criteria1:="Standard" 'Ship Priority
-End Sub
-Sub InvokeShipPriorityClearFilter()
-    ActiveSheet.Range("Row3").AutoFilter Field:=55 'Ship Priority
-End Sub
-Sub InvokeDuplicateRemoval()
 
+Sub InvokeDTCDuplicateRemovalPersonalized()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.DTC_Personalized
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeDTCDuplicateRemovalPersonalized"
 End Sub
-Sub DTCDuplicateRemovalSheetPersonalized()
-    Application.ScreenUpdating = False
-    Dim DTCSheet As Object
-    Range("K3").Select
-    Range(Selection, Selection.End(xlDown)).Select
-    Selection.Copy
-    Sheets.Add After:=ActiveSheet
-    ActiveSheet.Select
-    ActiveSheet.Name = "Personalized"
-    ActiveSheet.Paste
-    Application.CutCopyMode = False
-    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
-    Application.ScreenUpdating = True
+Sub InvokeDTCDuplicateRemovalNotPersonalized()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.DTC_Not_Personalized
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeDTCDuplicateRemovalNotPersonalized"
 End Sub
-
-Sub DTCDuplicateRemovalSheetPersonalized1Cup()
-    Application.ScreenUpdating = False
-    Dim DTCSheet As Object
-    Range("K3").Select
-    Range(Selection, Selection.End(xlDown)).Select
-    Selection.Copy
-    Sheets.Add After:=ActiveSheet
-    ActiveSheet.Select
-    ActiveSheet.Name = "Personalized, 1 Cup"
-    ActiveSheet.Paste
-    Application.CutCopyMode = False
-    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
-    Application.ScreenUpdating = True
+Sub InvokeDTCDuplicateRemovalNotPersonalized1Cup()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.DTC_Not_Personlized_1_Cup
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeDTCDuplicateRemovalNotPersonalized1Cup"
 End Sub
-
-Sub DTCDuplicateRemovalSheetAutoEligible()
-    Application.ScreenUpdating = False
-    Dim DTCSheet As Object
-    Range("K3").Select
-    Range(Selection, Selection.End(xlDown)).Select
-    Selection.Copy
-    Sheets.Add After:=ActiveSheet
-    ActiveSheet.Select
-    ActiveSheet.Name = "Auto Eligible"
-    ActiveSheet.Paste
-    Application.CutCopyMode = False
-    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
-    Application.ScreenUpdating = True
+Sub InvokeDTCDuplicateRemovalAutoEligible()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.DTC_Auto_Eligible
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeDTCDuplicateRemovalAutoEligible"
 End Sub
-
-Sub DTCDuplicateRemovalSheetNotPersonalized()
-    Application.ScreenUpdating = False
-    Dim DTCSheet As Object
-    Range("K3").Select
-    Range(Selection, Selection.End(xlDown)).Select
-    Selection.Copy
-    Sheets.Add After:=ActiveSheet
-    ActiveSheet.Select
-    ActiveSheet.Name = "Not Personalized"
-    ActiveSheet.Paste
-    Application.CutCopyMode = False
-    ActiveSheet.Range("A:A").RemoveDuplicates Columns:=1, Header:=xlYes
-    Application.ScreenUpdating = True
+Sub InvokeWarrantyDuplicateRemovalPersonalized()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.Warranty_Personalized
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeWarrantyDuplicateRemovalPersonalized"
 End Sub
-
-Sub DTCAll()
-    DTCFilter4
-    DTCDuplicateRemovalSheet4
-    DTCFilter3
-    DTCDuplicateRemovalSheet3
-    DTCFilter2
-    DTCDuplicateRemovalSheet2
-    DTCFilter1
-    DTCDuplicateRemovalSheet1
+Sub InvokeWarrantyDuplicateRemovalNotPersonalized()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.Warranty_Not_Personalized
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeWarrantyDuplicateRemovalNotPersonalized"
+End Sub
+Sub InvokeWarrantyDuplicateRemovalNotPersonalized1Cup()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.Warranty_Not_Personlized_1_Cup
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeWarrantyDuplicateRemovalNotPersonalized1Cup"
+End Sub
+Sub InvokeWarrantyDuplicateRemovalAutoEligible()
+    InvokeDuplicateRemoval OrderSubtype:=OrderSubtypeEnum.Warranty_Auto_Eligible
+    NewSchedlingFilterFunctionCallEvent FunctionName:="InvokeWarrantyDuplicateRemovalAutoEligible"
 End Sub
 
 Sub NewEvent(Message As String)
@@ -185,13 +179,4 @@ End Sub
 
 Sub NewSchedlingFilterFunctionCallEvent(FunctionName As String)
     NewEvent Message:="{FunctionName:'" & FunctionName & "'}"
-End Sub
-
-Sub TestNewEvent()
-    NewEvent Message:="{FunctionName:'Value'}"
-End Sub
-
-Sub TestNewSchedlingFilterFunctionCallEvent()
-    NewSchedlingFilterFunctionCallEvent FunctionName:="TestFunctionName"
-
 End Sub

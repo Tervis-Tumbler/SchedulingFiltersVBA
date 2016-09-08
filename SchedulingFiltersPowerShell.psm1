@@ -1,5 +1,3 @@
-﻿#Requires -Modules OOXMLSourceControl.psm1
-
 function Test-FileLock {
     [cmdletbinding()]
     param(
@@ -34,3 +32,5 @@ function Export-SchedulingFilterExcelVBA{
 
     Export-ExcelProject -WorkbookPath $SourceFile -OutputPath $DestinationFolder -Verbose
 }
+
+Export-SchedulingFilterExcelVBA
