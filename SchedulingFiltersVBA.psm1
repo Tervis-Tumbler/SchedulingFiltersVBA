@@ -1,7 +1,7 @@
 function Test-FileLock {
     [cmdletbinding()]
     param(
-        [parameter(Mandatory=$true)]
+        [parameter(Mandatory)]
         [string]
         $Path
     )
@@ -26,11 +26,24 @@ function Test-FileLock {
     }
 }
 
-function Export-SchedulingFilterExcelVBA{
+function Export-SchedulingFilterExcelVBA {
     $SourceFile = "C:\Users\alozano\Documents\WindowsPowerShell\Modules\SchedulingFiltersVBA\Worksheets\SchedulingFilters.xlsm"
     $DestinationFolder = "C:\Users\alozano\Documents\WindowsPowerShell\Modules\SchedulingFiltersVBA\Worksheet Export"
 
     Export-ExcelProject -WorkbookPath $SourceFile -OutputPath $DestinationFolder -Verbose
 }
 
-Export-SchedulingFilterExcelVBA
+#Export-SchedulingFilterExcelVBA
+
+$SchedulingPCComputerNames = @("Scheduling2-pc")
+
+function get-SchedulingPCComputerNames {
+    $SchedulingPCComputerNames
+}
+
+function Get-SchedulingFilterButtonEvents {
+    foreach ($SchedulingPCComputerName in get-SchedulingPCComputerNames) {
+        $EventLogEntries = get-eventlog -LogName Application -ComputerName $SchedulingPCComputerName -Source WSH
+    }
+
+}
