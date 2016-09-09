@@ -43,12 +43,21 @@ function get-SchedulingComputerNames {
 
 function Get-SchedulingFilterButtonEvents {    
     foreach ($SchedulingComputerName in get-SchedulingComputerNames) {
-        $EventLogEntries = get-eventlog -LogName Application -ComputerName $SchedulingComputerName -Source WSH
         $PathToStoreEvents = "\\tervis.prv\applications\Logs\Infrastructure\SchedulingFiltersVBA\$SchedulingComputerName"
         if ((Test-Path $PathToStoreEvents) -eq $False) { New-item -ItemType Directory $PathToStoreEvents }
 
+        $MostRecentFile = Get-ChildItem $PathToStoreEvents -File | sort -Descending | select -First 1
+        $LastEventDateTimeGenerated = if ($MostRecentFile) {[datetime]::ParseExact($MostRecentFile.BaseName,"yyyyMMddTHHmmssffff", [System.Globalization.CultureInfo]::CurrentCulture)}
+        
+        $EventLogEntries = if ($LastEventDateTimeGenerated) {
+            get-eventlog -LogName Application -ComputerName $SchedulingComputerName -Source WSH -After $LastEventDateTimeGenerated
+        } else {
+            get-eventlog -LogName Application -ComputerName $SchedulingComputerName -Source WSH
+        }
+
         foreach ($EventLogEntry in $EventLogEntries) {
             $MessageProperties = $EventLogEntry.Message | ConvertFrom-Json
+
             [pscustomobject][ordered]@{
                 MachineName = $EventLogEntry.MachineName
                 FunctionName = $MessageProperties.FunctionName
@@ -56,9 +65,7 @@ function Get-SchedulingFilterButtonEvents {
                 TimeWritten = $EventLogEntry.TimeWritten
             } | 
             ConvertTo-Json |
-            Out-File -FilePath "$PathToStoreEvents\$(get-date -Format -- FileDateTime).json"
-
-            #[datetime]::ParseExact($(get-date -Format -- FileDateTime),"yyyyMMddTHHmmssffff", [System.Globalization.CultureInfo]::CurrentCulture)
+            Out-File -FilePath "$PathToStoreEvents\$($EventLogEntry.TimeGenerated | get-date -Format -- FileDateTime).json"            
         }
     }
 }
